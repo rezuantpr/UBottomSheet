@@ -15,7 +15,7 @@ public class PanelContainer<T: UIView>: UIViewController {
 
   private weak var container: UIViewController?
   
-  init(container: UIViewController?,
+  public init(container: UIViewController?,
        dataSource: UBottomSheetCoordinatorDataSource = BottomSheetDefaultDataSource(sheetPositions: [0.3, 0.7], availableHeightPercent: 0.7)) {
     self.dataSource = dataSource
     super.init(nibName: nil, bundle: nil)
