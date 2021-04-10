@@ -33,16 +33,16 @@ public class PanelContainer<T: UIView>: UIViewController {
     super.init(coder: coder)
   }
   
-  lazy var innerView = T.init()
+  public lazy var innerView = T.init()
   
   public override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = .green
     innerView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(innerView)
     view.setNeedsUpdateConstraints()
   }
   
+  @discardableResult
   public func show() {
     
     guard let parent = container else { return }
