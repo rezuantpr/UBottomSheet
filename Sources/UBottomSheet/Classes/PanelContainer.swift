@@ -23,11 +23,11 @@ public class PanelContainer<T: UIView>: UIViewController {
   public var sheetCoordinator: UBottomSheetCoordinator?
   
   public var dataSource: UBottomSheetCoordinatorDataSource
-
+  
   private weak var container: UIViewController?
   
   public init(container: UIViewController?,
-       dataSource: UBottomSheetCoordinatorDataSource = BottomSheetDefaultDataSource(sheetPositions: [0.3, 0.7], initialPosition: 0.7)) {
+              dataSource: UBottomSheetCoordinatorDataSource = BottomSheetDefaultDataSource(sheetPositions: [0.3, 0.7], initialPosition: 0.7)) {
     self.dataSource = dataSource
     super.init(nibName: nil, bundle: nil)
     
@@ -67,8 +67,8 @@ public class PanelContainer<T: UIView>: UIViewController {
   }
   
   public override func viewWillAppear(_ animated: Bool) {
-      super.viewWillAppear(animated)
-      sheetCoordinator?.startTracking(item: self)
+    super.viewWillAppear(animated)
+    sheetCoordinator?.startTracking(item: self)
   }
   
   public override func viewWillLayoutSubviews() {
@@ -92,21 +92,24 @@ extension PanelContainer: Draggable {
 extension PanelContainer: UBottomSheetCoordinatorDelegate {
   public func bottomSheet(_ container: UIView?, didChange state: SheetTranslationState) {
     switch state {
-
-    case .finished(_, let percent):
-      let sheetPositions = dataSource.sheetPositions(sheetCoordinator?.availableHeight ?? 0)
-      if abs(percent - (sheetPositions.first ?? 0)) < 0.001 {
-        delegate?.didChange(position: .top)
-      } else if abs(percent - (sheetPositions.last ?? 0)) < 0.001 {
-        delegate?.didChange(position: .bottom)
-      }
-      break
-      
-    default: break
+    case .finished(let yPosition, _):
+      handle(yPosition: yPosition)
+    case .progressing(let yPosition, _):
+      handle(yPosition: yPosition)
+    case .willFinish(let yPosition, _):
+      handle(yPosition: yPosition)
+    }
+  }
+  
+  private func handle(yPosition: CGFloat) {
+    let sheetPositions = dataSource.sheetPositions(sheetCoordinator?.availableHeight ?? 0)
+    if abs(yPosition - (sheetPositions.min() ?? 0)) < 0.001 {
+      delegate?.didChange(position: .top)
+    } else if abs(yPosition - (sheetPositions.max() ?? 0)) < 0.001 {
+      delegate?.didChange(position: .bottom)
     }
   }
 }
-
 extension UIView{
   func roundCorners(corners: UIRectCorner, radius: CGFloat, rect: CGRect) {
     let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
