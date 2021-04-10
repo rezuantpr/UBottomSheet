@@ -33,12 +33,12 @@ public class PanelContainer<T: UIView>: UIViewController {
     super.init(coder: coder)
   }
   
-  public lazy var innerView = T.init()
+  public lazy var childView = T.init()
   
   public override func viewDidLoad() {
     super.viewDidLoad()
-    innerView.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(innerView)
+    childView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(childView)
     view.setNeedsUpdateConstraints()
   }
   
@@ -63,15 +63,15 @@ public class PanelContainer<T: UIView>: UIViewController {
   
   public override func viewWillLayoutSubviews() {
     super.viewWillLayoutSubviews()
-    innerView.frame = view.bounds
+    childView.frame = view.bounds
   }
   
   public override func updateViewConstraints() {
     super.updateViewConstraints()
-    innerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-    innerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-    innerView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-    innerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    childView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+    childView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    childView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+    childView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
   }
 }
 
