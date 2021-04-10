@@ -10,11 +10,11 @@ import UIKit
 open class BottomSheetDefaultDataSource: UBottomSheetCoordinatorDataSource {
   
   private var sheetPositions: [CGFloat]
-  private var availableHeightPercent: CGFloat
+  private var initialPosition: CGFloat
   
-  public init(sheetPositions: [CGFloat], availableHeightPercent: CGFloat) {
+  public init(sheetPositions: [CGFloat], initialPosition: CGFloat) {
     self.sheetPositions = sheetPositions
-    self.availableHeightPercent = availableHeightPercent
+    self.initialPosition = initialPosition
   }
   
   public func sheetPositions(_ availableHeight: CGFloat) -> [CGFloat] {
@@ -22,6 +22,6 @@ open class BottomSheetDefaultDataSource: UBottomSheetCoordinatorDataSource {
   }
   
   public func initialPosition(_ availableHeight: CGFloat) -> CGFloat {
-    return availableHeight * availableHeightPercent
+    return availableHeight * initialPosition
   }
 }

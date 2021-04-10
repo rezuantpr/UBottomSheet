@@ -7,7 +7,18 @@
 
 import UIKit
 
+public enum PanelPosition {
+  case top
+  case bottom
+}
+
+public protocol PanelContainerDelegate: class {
+  func didChange(position: PanelPosition)
+}
+
 public class PanelContainer<T: UIView>: UIViewController {
+  
+  public weak var delegate: PanelContainerDelegate?
   
   public var sheetCoordinator: UBottomSheetCoordinator?
   
@@ -16,7 +27,7 @@ public class PanelContainer<T: UIView>: UIViewController {
   private weak var container: UIViewController?
   
   public init(container: UIViewController?,
-       dataSource: UBottomSheetCoordinatorDataSource = BottomSheetDefaultDataSource(sheetPositions: [0.3, 0.7], availableHeightPercent: 0.7)) {
+       dataSource: UBottomSheetCoordinatorDataSource = BottomSheetDefaultDataSource(sheetPositions: [0.3, 0.7], initialPosition: 0.7)) {
     self.dataSource = dataSource
     super.init(nibName: nil, bundle: nil)
     
@@ -29,7 +40,7 @@ public class PanelContainer<T: UIView>: UIViewController {
   }
   
   required public init?(coder: NSCoder) {
-    self.dataSource = BottomSheetDefaultDataSource(sheetPositions: [0.3, 0.7], availableHeightPercent: 0.7)
+    self.dataSource = BottomSheetDefaultDataSource(sheetPositions: [0.3, 0.7], initialPosition: 0.7)
     super.init(coder: coder)
   }
   
@@ -42,7 +53,6 @@ public class PanelContainer<T: UIView>: UIViewController {
     view.setNeedsUpdateConstraints()
   }
   
-  @discardableResult
   public func show() {
     
     guard let parent = container else { return }
@@ -80,7 +90,21 @@ extension PanelContainer: Draggable {
 }
 
 extension PanelContainer: UBottomSheetCoordinatorDelegate {
-  
+  public func bottomSheet(_ container: UIView?, didChange state: SheetTranslationState) {
+    switch state {
+
+    case .finished(_, let percent):
+      let sheetPositions = dataSource.sheetPositions(sheetCoordinator?.availableHeight ?? 0)
+      if abs(percent - (sheetPositions.first ?? 0)) < 0.001 {
+        delegate?.didChange(position: .top)
+      } else if abs(percent - (sheetPositions.last ?? 0)) < 0.001 {
+        delegate?.didChange(position: .bottom)
+      }
+      break
+      
+    default: break
+    }
+  }
 }
 
 extension UIView{
